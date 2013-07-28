@@ -23,25 +23,34 @@
  ****************************************************************************************/
 
 
-#ifndef JNICONTEXT_HELPER_H
-#define JNICONTEXT_HELPER_H
+#ifndef JNICTX_H
+#define JNICTX_H
 
 #include "jni.h"
 
-typedef struct JNIContext {
+typedef enum JNICtxResult {
+    UNKNOW_ERROR = -3,
+    BAD_PARAMETER = -2,
+    MALLOC_FAILED = -1,
+    OK = 0,
+    SUCCESS = OK,
+} JNICtxResult;
+
+typedef struct JNICtx {
     JavaVM *jvm;
     int vmversion;
     pthread_key_t tls_key;
-    void (*thread_destructor)(void *context);
-} JNIContext;
+    void (*thread_dtr)(void *context);
+    struct JNICtx *self;
+} JNICtx;
 
 typedef struct TLStore {
     JNIEnv* jni_env;
-    JNIContext* context;
+    JNICtx* context;
 } TLStore;
 
-void InitJNIContext(JNIContext& context, JavaVM* vm);
-JNIEnv* GetJNIEnv(JNIContext& context);
-void RecordJNIEnv(JNIContext& context, JNIEnv* env);
+int InitJNICtx(JavaVM* vm, JNICtx **jni_ctx);
+JNIEnv* GetJNIEnv(JNICtx* context);
+int LogJNIEnv(JNICtx* context, JNIEnv* env);
 
-#endif  // JNICONTEXT_HELPER_H
+#endif  // JNICTX_H

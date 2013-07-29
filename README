@@ -1,1 +1,1 @@
-a helper util to help to track the JNIEnv in JNI code on Android platform
+a helper util to track the JNIEnv in JNI code on Android platform, conform to the LGPL-3.0
